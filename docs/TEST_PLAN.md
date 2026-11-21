@@ -91,6 +91,15 @@ See [PAIRING_TEST_PLAN.md](PAIRING_TEST_PLAN.md) for pairing and restart checks.
 See [SESSION_TEST_PLAN.md](SESSION_TEST_PLAN.md) for the 2026-11-17 Windows build,
 anonymous staging probes, and remaining authenticated runtime checks.
 
+## Android secure storage
+
+Run on a tablet or emulator after `npm run android`:
+1. First launch shows the pairing code form, not "Secure storage is unavailable".
+2. Pair with a staging code, force-stop the app, relaunch: pairing is restored.
+3. Disconnect tablet, relaunch: the code form returns (saved pairing removed).
+4. `adb shell run-as com.fieldmachine cat shared_prefs/field_machine_secure_store.xml`
+   shows only ciphertext, never the plain pairing token.
+
 ## Windows Send to Portal
 
 Use a test pairing and staging deployment with migration

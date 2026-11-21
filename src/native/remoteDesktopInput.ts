@@ -10,6 +10,9 @@ interface RemoteDesktopInput {
   ) => Promise<boolean>;
 }
 
+// Windows (C++ SendInput) and Android (Kotlin accessibility service) expose
+// the same module name and start/reset/apply surface, so one adapter serves
+// both. Other platforms have no module and report input as unavailable.
 const nativeInput: RemoteDesktopInput | undefined = NativeModules.FieldMachineRemoteDesktopInput;
 
 const apply = async (owner: string, input: RemoteInput) => {

@@ -8,9 +8,12 @@ interface NativeDesignDelivery {
     index: number, size: number, sha256: string, url: string) => Promise<string>;
   stop: () => void;
   openProject: (scope: string, delivery: string, project: string) => Promise<void>;
+  // Android only: list a project's files and open one with another app.
+  listFiles?: (scope: string, delivery: string, project: string) => Promise<unknown>;
+  openFile?: (scope: string, delivery: string, project: string, path: string) => Promise<void>;
 }
 
-const native: NativeDesignDelivery | undefined = Platform.OS === 'windows'
+const native: NativeDesignDelivery | undefined = Platform.OS === 'windows' || Platform.OS === 'android'
   ? NativeModules.FieldMachineDesignDelivery
   : undefined;
 

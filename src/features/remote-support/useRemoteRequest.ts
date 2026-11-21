@@ -169,6 +169,14 @@ const useRemoteRequest = (device: PairedDevice, isPaired: boolean) => {
     recordingStatus: isPaired ? activeSession?.recording?.status : undefined,
     approvedId: isPaired ? approvedId : undefined,
     canControl: isPaired && activeSession?.scope.control === true && activeSession.id === controlConsentId,
+    isControlRequested: isPaired && activeSession?.scope.control === true,
+    // Local consent lives only in memory. After an app restart, or when a session became
+    // active without this tablet's prompt, the operator must approve sharing here again.
+    onResume: (allowControl: boolean) => {
+      if (!isPaired || !activeSession) return;
+      setApprovedId(activeSession.id);
+      setControlConsentId(allowControl && activeSession.scope.control ? activeSession.id : undefined);
+    },
     isSubmitting,
     error,
     onAction: (id: string, action: RemoteSessionAction) => submitAction.current(id, action),

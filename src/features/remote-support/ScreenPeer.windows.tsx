@@ -10,7 +10,7 @@ import useScreenPeerHeartbeat from './useScreenPeerHeartbeat';
 import recordSessionDiagnostic from '../connection/sessionDiagnostics';
 import type { ScreenPeerProps } from './ScreenPeer';
 import screenPeerPage from './screenPeerPage';
-import useDesktopControl from './useDesktopControl.windows';
+import useDesktopControl from './useDesktopControl';
 import handleScreenPickerMessage from './handleScreenPickerMessage';
 
 const styles = StyleSheet.create({

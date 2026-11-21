@@ -19,13 +19,13 @@ interface NativePortalTransfer {
 const getNativeModule = (): NativePortalTransfer => {
   const module: NativePortalTransfer | undefined = NativeModules.FieldMachinePortalTransfer;
   if (!module) {
-    throw new Error('File sharing requires an updated Windows app.');
+    throw new Error('File sharing requires an updated FIELD Machine app.');
   }
   return module;
 };
 
 const portalTransfer = {
-  isSupported: Platform.OS === 'windows',
+  isSupported: Platform.OS === 'windows' || Platform.OS === 'android',
   pick: async () => z.array(z.string().min(1)).parse(await getNativeModule().pick()),
   stage: async (pairing: string) => getNativeModule().stage(pairing),
   list: async (pairing: string) => pendingSchema.parse(await getNativeModule().list(pairing)),

@@ -23,6 +23,9 @@ Contract supplied by the user on 2026-11-12.
 - `POST /mc/device/pair`, no sign-in or Authorization header.
 - Request used by this app:
   `{ "code": "123456", "platform": "windows" }`
+- Android tablets send `"platform": "android"` (exact lowercase). Confirmed
+  2026-11-21: `PairDeviceDto.platform` allows only `android`/`windows`, and
+  migration 0121 enforces the same CHECK on `mc_devices`.
 - Remove whitespace from the entered code; require exactly six ASCII digits.
 - Optional serialNumber and appVersion are omitted in this step.
 - Never send deviceId or notificationId; the server rejects them.

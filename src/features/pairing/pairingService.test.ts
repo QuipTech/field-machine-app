@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import pairingService from './pairingService';
 import getSecureStore from '../../native/SecureStore';
 import postPublicJson from '../../services/apiClient';
@@ -16,10 +17,11 @@ const pairedDevice = {
 
 beforeEach(() => {
   jest.resetAllMocks();
+  jest.restoreAllMocks();
   jest.mocked(getSecureStore).mockReturnValue({ read, write, remove });
 });
 
-test('normalises the code and sends only accepted fields', async () => {
+test('normalises the code and identifies other platforms as windows', async () => {
   jest.mocked(postPublicJson).mockResolvedValue(pairedDevice);
   await expect(pairingService.requestPairing('123 456')).resolves.toEqual(
     pairedDevice,
@@ -27,6 +29,16 @@ test('normalises the code and sends only accepted fields', async () => {
   expect(postPublicJson).toHaveBeenCalledWith('/mc/device/pair', {
     code: '123456',
     platform: 'windows',
+  });
+});
+
+test('identifies an Android tablet when pairing', async () => {
+  jest.replaceProperty(Platform, 'OS', 'android');
+  jest.mocked(postPublicJson).mockResolvedValue(pairedDevice);
+  await pairingService.requestPairing('123456');
+  expect(postPublicJson).toHaveBeenCalledWith('/mc/device/pair', {
+    code: '123456',
+    platform: 'android',
   });
 });
 
