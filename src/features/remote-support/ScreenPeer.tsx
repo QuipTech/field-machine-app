@@ -5,6 +5,8 @@ export interface ScreenPeerProps {
   canControl: boolean;
 }
 
+export const supportsDesktopControl = false;
+
 const ScreenPeer = (_props: ScreenPeerProps) => null;
 
 export default ScreenPeer;

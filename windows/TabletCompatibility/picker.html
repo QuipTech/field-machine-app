@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LTSC 2019 probe</title>
+  <style>
+    body { margin: 0; background: #f3f4f6; color: #1c1b2e; font: 16px system-ui; }
+    header { background: #2e2190; color: white; padding: 18px 26px; }
+    h1 { font-size: 22px; margin: 0; }
+    main { max-width: 860px; margin: auto; padding: 24px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    button { font: inherit; background: #4733c4; color: white; border: 0; border-radius: 6px; padding: 12px 18px; }
+    button:disabled { opacity: .5; }
+    video { width: 100%; max-height: 330px; margin-top: 12px; background: #1c1b2e; }
+  </style>
+</head>
+<body>
+  <header><h1>FIELD Machine · LTSC 2019 compatibility</h1></header>
+  <main>
+    <p id="status" role="status">Checking screen capture availability…</p>
+    <div class="actions">
+      <button id="choose" disabled>Choose a screen or window</button>
+      <button id="stop" hidden>Stop capture</button>
+    </div>
+    <video id="preview" muted autoplay hidden></video>
+  </main>
+  <script>
+    const status = document.getElementById('status');
+    const choose = document.getElementById('choose');
+    const stop = document.getElementById('stop');
+    const preview = document.getElementById('preview');
+    let stream;
+
+    const report = (text, title) => {
+      status.textContent = text;
+      document.title = title;
+    };
+
+    const stopCapture = () => {
+      const current = stream;
+      stream = undefined;
+      current?.getTracks().forEach(track => track.stop());
+      preview.srcObject = null;
+      preview.hidden = true;
+      stop.hidden = true;
+      choose.disabled = false;
+    };
+
+    if (window.isSecureContext && navigator.mediaDevices?.getDisplayMedia) {
+      choose.disabled = false;
+      report('Ready. Choose a screen or window to preview it on this tablet.', 'Picker ready');
+    } else {
+      report('This WebView2 runtime does not expose screen capture.', 'Capture unavailable');
+    }
+
+    choose.onclick = async () => {
+      choose.disabled = true;
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        stream.getVideoTracks()[0].addEventListener('ended', () => {
+          stopCapture();
+          report('Capture ended.', 'Capture stopped');
+        }, { once: true });
+        preview.srcObject = stream;
+        preview.hidden = false;
+        stop.hidden = false;
+        await preview.play();
+        if (stream) report('Capture is active. The preview stays on this tablet.', 'Capture active');
+      } catch (error) {
+        stopCapture();
+        const reason = error?.name || 'UnknownError';
+        report('Capture did not start (' + reason + ').', 'Capture stopped');
+      }
+    };
+    stop.onclick = () => {
+      stopCapture();
+      report('Capture stopped.', 'Capture stopped');
+    };
+    window.addEventListener('pagehide', stopCapture);
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+#ifdef FIELD_MACHINE_COMPATIBILITY_APP
+101 RCDATA "tablet.html"
+102 RCDATA "x64/Release/compatibility.bundle"
+103 RCDATA "x64/Release/session-picker.html"
+#else
+101 RCDATA "picker.html"
+#endif

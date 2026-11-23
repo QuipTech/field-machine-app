@@ -9,7 +9,7 @@ const screenPeerSignaling = `
       } catch {
         // A malformed envelope cannot participate in negotiation.
       }
-      window.chrome.webview.postMessage('signaling_frame_ignored');
+      reportPickerEvent('signaling_frame_ignored');
     };
     const readOffer = payload => {
       try {
@@ -18,7 +18,7 @@ const screenPeerSignaling = `
       } catch {
         // Keep the peer available for the next offer from the authorized viewer.
       }
-      window.chrome.webview.postMessage('signaling_frame_ignored');
+      reportPickerEvent('signaling_frame_ignored');
     };
     let messages = Promise.resolve();
     currentSocket.onmessage = event => {
@@ -38,7 +38,7 @@ const screenPeerSignaling = `
             if (offer.sdp === answeredOffer) send('SDP_ANSWER', currentPeer.localDescription.toJSON());
             return;
           }
-          window.chrome.webview.postMessage('sdp_offer_received');
+          reportPickerEvent('sdp_offer_received');
           await currentPeer.setRemoteDescription(offer);
           const video = currentPeer.getTransceivers().find(item => item.receiver.track.kind === 'video');
           if (!video) throw new Error();
@@ -61,10 +61,10 @@ const screenPeerSignaling = `
       }).catch(() => {
         if (attempt === generation) {
           if (answeredOffer) {
-            window.chrome.webview.postMessage('signaling_frame_ignored');
+            reportPickerEvent('signaling_frame_ignored');
             return;
           }
-          window.chrome.webview.postMessage('negotiation_failed');
+          reportPickerEvent('negotiation_failed');
           stop('The Portal viewer could not connect.');
         }
       });

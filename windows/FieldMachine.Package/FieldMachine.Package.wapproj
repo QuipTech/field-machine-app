@@ -4,6 +4,7 @@
   <PropertyGroup>
     <ProjectGuid>{f29dd9dd-1dd4-4fe9-bb60-9018a33beb7b}</ProjectGuid>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <EntryPointProjectUniqueName>..\FieldMachine\FieldMachine.vcxproj</EntryPointProjectUniqueName>
     <DebuggerType>NativeOnly</DebuggerType>
     <BackgroundTaskDebugEngines>NativeOnly</BackgroundTaskDebugEngines>
@@ -46,7 +47,10 @@
     <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.Package.props" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.Package.props')" />
   </ImportGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
+    <AppxManifest Include="Package.appxmanifest" Condition="'$(FieldMachineTabletPilot)' != 'true'">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <AppxManifest Include="Package.TabletPilot.appxmanifest" Condition="'$(FieldMachineTabletPilot)' == 'true'">
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>

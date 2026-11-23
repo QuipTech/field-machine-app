@@ -3,7 +3,7 @@ import screenPeerIce from './screenPeerIce';
 import screenPeerSignaling from './screenPeerSignaling';
 import screenPeerControl from './screenPeerControl';
 
-const screenPeerPage = `<!doctype html><html><head>
+export const createScreenPeerPage = (bridge: string) => `<!doctype html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src wss://*.kinesisvideo.ap-southeast-2.amazonaws.com">
 ${screenPeerStyles}
@@ -13,6 +13,7 @@ ${screenPeerStyles}
 <button id="retry" hidden>Reconnect screen sharing</button>
 <p id="status" role="status">Share a window for viewing only, or an entire screen for remote control when approved.</p>
 <script>
+${bridge}
 let config;
 const share = document.getElementById('share');
 const status = document.getElementById('status');
@@ -22,9 +23,9 @@ const microphone = document.getElementById('microphone');
 window.enableFieldScreenPicker = credentials => {
   config = credentials;
   share.disabled = false;
-  window.chrome.webview.postMessage('screen-picker-ready');
+  reportPickerEvent('screen-picker-ready');
 };
-retry.onclick = () => window.chrome.webview.postMessage('reconnect-screen-peer');
+retry.onclick = () => reportPickerEvent('reconnect-screen-peer');
 let stream;
 let socket;
 let peer;
@@ -36,13 +37,14 @@ const stop = message => {
   if (stream) stream.getTracks().forEach(track => track.stop());
   supportAudio.srcObject = null;
   peer = socket = stream = undefined;
-  window.chrome?.webview?.postMessage('control-release');
+  reportPickerEvent('control-release');
   if (message) {
     status.textContent = message;
     retry.hidden = false;
   }
 };
 window.addEventListener('pagehide', () => stop());
+window.stopFieldScreenPicker = () => stop();
 const encode = value => btoa(Array.from(new TextEncoder().encode(JSON.stringify(value)),
   byte => String.fromCharCode(byte)).join(''));
 const decode = value => JSON.parse(new TextDecoder().decode(
@@ -78,15 +80,15 @@ share.onclick = async () => {
       return;
     }
     track.onended = () => {
-      window.chrome.webview.postMessage('capture_ended');
+      reportPickerEvent('capture_ended');
       stop('Windows ended screen capture. Reconnect and select the screen again.');
     };
     track.onmute = () => {
-      window.chrome.webview.postMessage('control-release');
-      window.chrome.webview.postMessage('capture_muted');
+      reportPickerEvent('control-release');
+      reportPickerEvent('capture_muted');
     };
-    track.onunmute = () => window.chrome.webview.postMessage('capture_unmuted');
-    window.chrome.webview.postMessage('screen-picker-selected-' + surface);
+    track.onunmute = () => reportPickerEvent('capture_unmuted');
+    reportPickerEvent('screen-picker-selected-' + surface);
     if (microphone.checked) {
       try {
         const audioCapture = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -117,7 +119,7 @@ share.onclick = async () => {
       if (attempt === generation && currentSocket.readyState === WebSocket.OPEN) {
         currentSocket.send(JSON.stringify({ action, recipientClientId: config.viewerClientId,
           messagePayload: encode(payload) }));
-        if (action === 'SDP_ANSWER') window.chrome.webview.postMessage('sdp_answer_sent');
+        if (action === 'SDP_ANSWER') reportPickerEvent('sdp_answer_sent');
       }
     };
     const pendingIce = [];
@@ -134,13 +136,13 @@ share.onclick = async () => {
       if (attempt !== generation) return;
       clearTimeout(recoveryTimeout);
       const state = currentPeer.connectionState;
-      window.chrome.webview.postMessage('peer_' + state);
+      reportPickerEvent('peer_' + state);
       if (state === 'connected') {
         track.enabled = true;
         status.textContent = surface === 'window' ? 'Sharing one window · View only' : 'Sharing screen.';
       }
       if (state === 'disconnected') {
-        window.chrome.webview.postMessage('control-release');
+        reportPickerEvent('control-release');
         track.enabled = false;
         status.textContent = 'Viewer connection interrupted. Waiting to reconnect…';
         recoveryTimeout = setTimeout(() => {
@@ -153,11 +155,11 @@ share.onclick = async () => {
     };
     currentSocket.onopen = () => {
       status.textContent = 'Waiting for the Portal viewer.';
-      window.chrome.webview.postMessage('signaling_open');
+      reportPickerEvent('signaling_open');
     };
     currentSocket.onclose = () => {
       if (attempt === generation) {
-        window.chrome.webview.postMessage('signaling_closed');
+        reportPickerEvent('signaling_closed');
         stop('Signaling closed.');
       }
     };
@@ -168,7 +170,11 @@ share.onclick = async () => {
     }
   }
 };
-window.chrome.webview.postMessage('screen-picker-page-loaded');
+reportPickerEvent('screen-picker-page-loaded');
 </script></body></html>`;
+
+const screenPeerPage = createScreenPeerPage(
+  'const reportPickerEvent = message => window.chrome.webview.postMessage(message);',
+);
 
 export default screenPeerPage;

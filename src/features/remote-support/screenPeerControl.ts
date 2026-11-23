@@ -12,7 +12,7 @@ const screenPeerControl = `
             typeof message.data !== 'string' || message.data.length > 8192) return;
         try {
           const input = JSON.parse(message.data);
-          if (input?.v === 1) window.chrome.webview.postMessage('control:' + message.data);
+          if (input?.v === 1) reportPickerEvent('control:' + message.data);
         } catch {
           // The native bridge receives only JSON protocol messages.
         }
@@ -21,7 +21,7 @@ const screenPeerControl = `
         channel.onmessage = null;
         if (controlChannel !== channel) return;
         controlChannel = undefined;
-        window.chrome.webview.postMessage('control-release');
+        reportPickerEvent('control-release');
       };
     };
 `;

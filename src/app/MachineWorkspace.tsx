@@ -15,7 +15,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import PhaseZeroScreen from '../screens/PhaseZeroScreen';
 import useRemoteRequest from '../features/remote-support/useRemoteRequest';
 import RemoteRequestPrompt from '../features/remote-support/RemoteRequestPrompt';
-import ScreenPeer from '../features/remote-support/ScreenPeer';
+import ScreenPeer, { supportsDesktopControl } from '../features/remote-support/ScreenPeer';
 import RemoteSupportScreen from '../screens/RemoteSupportScreen';
 import styles from '../components/workspaceStyles';
 
@@ -55,7 +55,7 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
           {device.machine.label}  ·  <Text style={status === 'connected' && styles.connected}>{CONNECTION_LABELS[status]}</Text>  ·  Staging
         </Text>
       </View>
-      <RemoteRequestPrompt {...remoteRequest} />
+      <RemoteRequestPrompt {...remoteRequest} supportsDesktopControl={supportsDesktopControl} />
       {remoteRequest.activeId &&
         remoteRequest.activeId === remoteRequest.approvedId && (
         <ScreenPeer
@@ -70,16 +70,16 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
         <View style={[styles.content, tab !== 'Files' && styles.hidden]}>
           <ScrollView contentContainerStyle={styles.page}>
             <Text accessibilityRole="header" style={styles.title}>Files</Text>
-            {portalTransfer.isSupported ? (
-              <>
-                <DesignProjects
-                  scope={scope}
-                  projects={currentDelivery?.projects ?? []}
-                  message={deliveryMessage}
-                />
-                <PortalTransferPanel device={device} />
-              </>
-            ) : <Text style={styles.body}>File transfer is available on Windows.</Text>}
+            {designStorage && (
+              <DesignProjects
+                scope={scope}
+                projects={currentDelivery?.projects ?? []}
+                message={deliveryMessage}
+              />
+            )}
+            {portalTransfer.isSupported && <PortalTransferPanel device={device} />}
+            {!designStorage && !portalTransfer.isSupported &&
+              <Text style={styles.body}>File transfer is available on Windows.</Text>}
           </ScrollView>
         </View>
         {tab === 'Settings' && isDiagnosticsOpen && (

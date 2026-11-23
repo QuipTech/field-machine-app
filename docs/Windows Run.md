@@ -166,3 +166,33 @@ Windows compilation cannot run on this macOS development host.
 
 - [RNW setup](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies)
 - [MSVC coroutine options](https://learn.microsoft.com/en-us/cpp/build/reference/await-enable-coroutine-support)
+## Windows x64 tablet installer
+
+The staging pilot installer is generated in `artifacts/windows-tablet/`
+by `scripts/windows-tablet/New-TabletSetup.ps1`. Build the solution in
+Release x64 with bundling enabled and packaging set to `AppxBundle=Never`.
+Pass the resulting MSIX, the Windows SDK SignTool path, and a code-signing
+certificate thumbprint from CurrentUser/My to the packaging script.
+The certificate subject must match the MSIX publisher.
+
+Copy the setup EXE and public test certificate to the x64 test tablet.
+If approved by its administrator, import the public certificate into
+Local Computer > Trusted People. Run the EXE and open FIELD Machine from
+Start. Confirm it starts with Metro stopped. The EXE includes the MSIX,
+Windows App Runtime, and Visual C++ dependencies. WebView2 is required for
+remote support. The current installer points at staging.
+
+For side-by-side installation with the registered Debug app, pass
+`FieldMachineTabletPilot=true` in the MSBuild properties. This builds
+`FieldMachine.TabletPilot` with the Start menu name **FIELD Machine Pilot**.
+Use `-SetupFileName FieldMachine-Setup-x64-pilot.exe` when wrapping the
+pilot MSIX. The separate identity avoids the Windows package conflict
+`0x80073CFB` without removing the Debug registration.
+
+Local verification on November 22, 2026 confirmed both registrations and
+the Pilot pairing screen with Metro offline. Open **FIELD Machine Pilot**
+from Start to run the installed Release package.
+
+Pilot 1.0.1.0 requires Windows build 18362 or later. The client tablet on
+Windows 10 Enterprise LTSC build 17763 installed 1.0.0.0 but crashed at
+startup. Its OS must be upgraded before testing this package.

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BCF71CAB-87BA-427F-8C59-AF13CF6653F0}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(MSBuildThisFileDirectory)..\..\artifacts\windows-tablet\compatibility\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)x64\Release\</IntDir>
+    <TargetName>FieldMachine-LTSC2019-Probe-x64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(FieldMachineCompatibilityApp)' == 'true'">
+    <TargetName>FieldMachine-LTSC2019-Pairing-x64</TargetName>
+    <IntDir>$(MSBuildThisFileDirectory)x64\Release\Tablet\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>Level4</WarningLevel>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(WebView2Sdk)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(WebView2Sdk)\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebView2LoaderStatic.lib;version.lib;ole32.lib;runtimeobject.lib;user32.lib;shlwapi.lib;shell32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(FieldMachineCompatibilityApp)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions>FIELD_MACHINE_COMPATIBILITY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\$(WindowsTargetPlatformVersion)\cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>FIELD_MACHINE_COMPATIBILITY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>windowsapp.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CompatibilityProbe.cpp" />
+    <ClCompile Include="CompatibilityResources.cpp" />
+    <ClCompile Include="CompatibilityStorage.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityFileBridge.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityDesign.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityPortalFiles.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="..\FieldMachine\Native\DesignDeliveryDownload.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="..\FieldMachine\Native\PortalTransferUpload.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ResourceCompile Include="CompatibilityProbe.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

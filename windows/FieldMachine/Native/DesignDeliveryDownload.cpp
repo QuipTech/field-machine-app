@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "DesignDeliveryModule.h"
+#include <Windows.h>
+#include "DesignDeliveryDownload.h"
 #include "DesignDeliveryStorage.h"
 #include <cctype>
 #include <winrt/Windows.Security.Cryptography.h>
@@ -42,16 +42,6 @@ static void CommitDesignFile(fs::path const &partial, fs::path const &destinatio
   owner.close();
   ReplaceDesignFile(partial, destination);
 }
-
-struct DesignDownload {
-  std::string scope, delivery, project, path, sha256, url;
-  uint64_t index, size;
-  std::shared_ptr<std::atomic<uint64_t>> generation;
-  uint64_t activeGeneration;
-  React::ReactPromise<std::string> promise;
-
-  bool IsStopped() const { return generation->load() != activeGeneration; }
-};
 
 static winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> DownloadDesign(DesignDownload job) {
   auto cancellation = co_await winrt::get_cancellation_token();
@@ -138,7 +128,7 @@ static winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> DownloadDesig
   co_return L"verified";
 }
 
-static winrt::fire_and_forget RunDesignDownload(DesignDownload job) {
+winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> RunDesignDownload(DesignDownload job) {
   try {
     auto operation = DownloadDesign(job);
     using winrt::Windows::System::Threading::ThreadPoolTimer;
@@ -149,31 +139,19 @@ static winrt::fire_and_forget RunDesignDownload(DesignDownload job) {
       }
     }, std::chrono::seconds(1));
     try {
-      job.promise.Resolve(winrt::to_string(co_await operation));
+      auto result = co_await operation;
+      timer.Cancel();
+      co_return result;
     } catch (...) {
       timer.Cancel();
       throw;
     }
-    timer.Cancel();
   } catch (std::invalid_argument const &) {
-    job.promise.Resolve("path");
+    co_return L"path";
   } catch (fs::filesystem_error const &) {
-    job.promise.Resolve("permanent");
+    co_return L"permanent";
   } catch (...) {
-    job.promise.Resolve("retry");
+    co_return L"retry";
   }
-}
-
-void DesignDeliveryModule::download(std::string scope, std::string delivery, std::string project,
-    std::string path, double index, double size, std::string sha256, std::string url,
-    React::ReactPromise<std::string> promise) noexcept {
-  constexpr double MaxSafeInteger = 9007199254740991.0;
-  if (!(index >= 0 && index <= MaxSafeInteger && size >= 0 && size <= MaxSafeInteger)) {
-    promise.Resolve("permanent");
-    return;
-  }
-  RunDesignDownload({std::move(scope), std::move(delivery), std::move(project), std::move(path),
-      std::move(sha256), std::move(url), static_cast<uint64_t>(index), static_cast<uint64_t>(size),
-      generation, generation->load(), promise});
 }
 }

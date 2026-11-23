@@ -67,6 +67,7 @@ yarn-error.log
 /coverage
 
 # Windows build and local IDE artifacts
+/artifacts/windows-tablet/
 .vs/
 **/x64/
 **/ARM64/

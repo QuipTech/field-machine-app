@@ -1,5 +1,5 @@
 const screenPeerIce = `
-    const reportIceRejected = () => window.chrome.webview.postMessage('ice_candidate_rejected');
+    const reportIceRejected = () => reportPickerEvent('ice_candidate_rejected');
     const addIce = async candidate => {
       try {
         await currentPeer.addIceCandidate(candidate);
