@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Remote-control accessibility service. It performs gestures and edits the
+  focused field only while an operator-approved Portal support session has
+  control. It does not read or report screen content.
+  android:description needs a string resource in res/values; it is omitted
+  until that file can be changed (see docs/ANDROID_REMOTE_SUPPORT.md).
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canPerformGestures="true"
+    android:canRetrieveWindowContent="true"
+    android:notificationTimeout="100" />

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import environment from '../../config/environment';
 import getSecureStore from '../../native/SecureStore';
 import postPublicJson from '../../services/apiClient';
@@ -40,7 +41,7 @@ const requestPairing = async (enteredCode: string): Promise<PairedDevice> => {
   getSecureStore();
   const response = await postPublicJson(environment.pairingPath, {
     code,
-    platform: 'windows',
+    platform: Platform.OS === 'android' ? 'android' : 'windows',
   });
   const result = pairingSchema.safeParse(response);
   if (!result.success) {

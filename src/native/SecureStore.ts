@@ -12,7 +12,7 @@ const getSecureStore = (): SecureStoreModule => {
   );
   if (!secureStore) {
     throw new Error(
-      'Secure storage is unavailable. Use a Windows build with the SecureStore module.',
+      'Secure storage is unavailable. Rebuild the app so the SecureStore native module is included.',
     );
   }
   // Metro can serve newer JavaScript to an older installed native executable.

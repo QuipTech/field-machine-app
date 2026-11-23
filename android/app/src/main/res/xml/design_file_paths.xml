@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider roots for "Open with" on received designs (DesignFileOpener.kt).
+     Limited to the app-managed delivery tree; nothing else is shareable. -->
+<paths>
+  <files-path name="designs" path="FIELD Machine/Portal transfers/" />
+</paths>

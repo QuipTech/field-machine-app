@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import { Button, Platform, Text, TextInput, View } from 'react-native';
 import native from '../../native/DesignDelivery';
 import styles from '../pairing/pairingStyles';
 import type { ActiveProject } from './designState';
+import DesignProjectFiles from './DesignProjectFiles';
 
 interface Props {
   scope: string;
   projects: ActiveProject[];
   message: string;
 }
+
+// Android cannot hand an app-private folder to another app, so it opens individual files instead.
+const canOpenFolders = Platform.OS !== 'android';
 
 const DesignProjects = ({ scope, projects, message }: Props) => {
   const [search, setSearch] = useState('');
@@ -40,8 +44,9 @@ const DesignProjects = ({ scope, projects, message }: Props) => {
       {projects.length > 0 && matching.length === 0 && (
         <Text style={styles.text}>No projects match your search.</Text>
       )}
-      {matching.map(project => (
-        <Button key={project.projectId} title={`Open ${project.project}`} onPress={() => open(project)} />
+      {matching.map(project => (canOpenFolders
+        ? <Button key={project.projectId} title={`Open ${project.project}`} onPress={() => open(project)} />
+        : <DesignProjectFiles key={project.projectId} scope={scope} project={project} />
       ))}
     </View>
   );

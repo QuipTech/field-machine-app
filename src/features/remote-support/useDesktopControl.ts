@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import remoteDesktopInput from '../../native/remoteDesktopInput.windows';
+import remoteDesktopInput from '../../native/remoteDesktopInput';
 import remoteInputSchema from './remoteInputSchema';
 import recordSessionDiagnostic from '../connection/sessionDiagnostics';
 

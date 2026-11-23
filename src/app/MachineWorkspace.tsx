@@ -45,7 +45,7 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
   const currentDelivery = delivery?.scope === scope ? delivery : undefined;
 
   const deliveryMessage = currentDelivery?.message ?? (designStorage
-    ? 'Checking saved projects…' : 'Install the latest Windows app to receive designs.');
+    ? 'Checking saved projects…' : 'Install the latest FIELD Machine app to receive designs.');
 
   return (
     <View style={styles.shell}>
@@ -79,7 +79,7 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
             )}
             {portalTransfer.isSupported && <PortalTransferPanel device={device} />}
             {!designStorage && !portalTransfer.isSupported &&
-              <Text style={styles.body}>File transfer is available on Windows.</Text>}
+              <Text style={styles.body}>File transfer is not available on this device.</Text>}
           </ScrollView>
         </View>
         {tab === 'Settings' && isDiagnosticsOpen && (

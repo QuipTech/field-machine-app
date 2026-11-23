@@ -6,8 +6,8 @@ import styles from '../../components/workspaceStyles';
 import type useRemoteRequest from './useRemoteRequest';
 
 const RemoteRequestPrompt = ({
-  request, activeId, isRecordingExpected, recordingStatus, isSubmitting, error, onAction,
-  supportsDesktopControl,
+  request, activeId, approvedId, isControlRequested, isRecordingExpected, recordingStatus,
+  isSubmitting, error, onAction, onResume, supportsDesktopControl,
 }: ReturnType<typeof useRemoteRequest> & { supportsDesktopControl: boolean }) => (
   <>
     {request && (
@@ -47,6 +47,21 @@ const RemoteRequestPrompt = ({
             {recordingStatus === 'failed' ? 'Recording failed'
               : recordingStatus === 'recording' ? 'Recording' : 'Recording enabled'}
           </Text>
+        )}
+        {activeId !== approvedId && (
+          <>
+            <Text style={styles.body}>
+              Approve screen sharing on this tablet for this session.
+            </Text>
+            <View style={styles.row}>
+              {supportsDesktopControl && isControlRequested && (
+                <ActionButton title="Allow with control access" disabled={isSubmitting}
+                  onPress={() => onResume(true)} />
+              )}
+              <ActionButton title="Allow view only" disabled={isSubmitting}
+                onPress={() => onResume(false)} />
+            </View>
+          </>
         )}
         <ActionButton
           title="End remote access"
