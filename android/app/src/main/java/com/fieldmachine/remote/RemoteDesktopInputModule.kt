@@ -1,5 +1,6 @@
 package com.fieldmachine.remote
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
@@ -32,7 +33,7 @@ class RemoteDesktopInputModule(reactContext: ReactApplicationContext) :
       releaseInput()
       val service = RemoteInputService.current
       // Continued strokes, needed for drags and long presses, require API 26.
-      val isReady = nextOwner.isNotEmpty() && service != null &&
+      val isReady = nextOwner.isNotEmpty() && service != null && isConsented() &&
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
       owner = if (isReady) nextOwner else null
       promise.resolve(isReady)
@@ -67,6 +68,31 @@ class RemoteDesktopInputModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun isServiceEnabled(promise: Promise) {
     promise.resolve(RemoteInputService.current != null)
+  }
+
+  /** True when the operator accepted the in-app accessibility disclosure. */
+  @ReactMethod
+  fun hasConsent(promise: Promise) {
+    promise.resolve(isConsented())
+  }
+
+  /** True once the operator accepted or declined, so the prompt shows once. */
+  @ReactMethod
+  fun isConsentDecided(promise: Promise) {
+    promise.resolve(preferences().contains(CONSENT_KEY))
+  }
+
+  /** Saves the operator's choice. Withdrawing it ends any control in progress. */
+  @ReactMethod
+  fun setConsent(isAccepted: Boolean, promise: Promise) {
+    main.post {
+      val isSaved = preferences().edit().putBoolean(CONSENT_KEY, isAccepted).commit()
+      if (!isAccepted) {
+        releaseInput()
+        owner = null
+      }
+      promise.resolve(isSaved)
+    }
   }
 
   /** Opens Settings > Accessibility so the operator can enable the service. */
@@ -107,12 +133,19 @@ class RemoteDesktopInputModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  private fun isConsented() = preferences().getBoolean(CONSENT_KEY, false)
+
+  private fun preferences() =
+    reactApplicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+
   private fun releaseInput() {
     RemoteInputService.current?.release()
   }
 
   companion object {
     const val NAME = "FieldMachineRemoteDesktopInput"
+    private const val PREFERENCES_NAME = "field_machine_remote_control"
+    private const val CONSENT_KEY = "accessibility_consent.v1"
     private const val MAX_WHEEL = 2400.0
     private const val MAX_TEXT = 2048
   }

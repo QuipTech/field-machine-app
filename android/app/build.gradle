@@ -82,7 +82,7 @@ android {
         applicationId "com.fieldmachine"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 3
         versionName "1.0"
     }
     signingConfigs {
@@ -92,15 +92,23 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // Credentials live in ~/.gradle/gradle.properties, never in this repository.
+        // Without them the release output stays unsigned instead of debug-signed.
+        if (project.hasProperty('FIELD_MACHINE_UPLOAD_STORE_FILE')) {
+            upload {
+                storeFile file(FIELD_MACHINE_UPLOAD_STORE_FILE)
+                storePassword FIELD_MACHINE_UPLOAD_STORE_PASSWORD
+                keyAlias FIELD_MACHINE_UPLOAD_KEY_ALIAS
+                keyPassword FIELD_MACHINE_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.findByName('upload')
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

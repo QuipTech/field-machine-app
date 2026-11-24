@@ -69,7 +69,10 @@ and protocol v1 control messages as Windows
 
 Viewing works without setup. For control:
 
-1. Open **Remote Support** and tap **Open accessibility settings**.
+1. On first opening a paired tablet, the disclosure appears once. Tap
+   **I agree**. If it was declined, open **Remote Support**, tap
+   **Set up remote control**, read the disclosure, and tap **I agree**.
+   Accessibility settings open only after consent.
 2. Choose **FIELD Machine remote control** under Downloaded apps, turn it
    on, and accept the warning.
 3. Android 13+ with a sideloaded APK: if the switch is greyed out ("Restricted
@@ -109,8 +112,8 @@ react-native-webrtc uses for the captured frame.
 - The lock screen, system dialogs (including the capture dialog), and apps
   that set `FLAG_SECURE` may block gestures or show black video.
 - Remote control requires Android 8.0+ (continued gestures).
-- The accessibility service has no description text: Android requires a
-  string resource for it, which belongs in `res/values` (not yet changed).
+- Consent is stored on the tablet. Without it the native module refuses
+  control, even if the service is on. **Withdraw consent** ends control.
 - Google Play restricts AccessibilityService use to accessibility purposes.
   Remote-support control likely needs a policy declaration or distribution
   outside Play (MDM or sideload). Confirm before a Play release.
@@ -134,7 +137,10 @@ Use the paired staging tablet (Ht-667) and a Portal user with `mc.remote`.
 6. Tap **End remote access** during a drag. Video stops, the touch lifts, and
    the notification disappears. Also test **Stop sharing**, airplane mode,
    and cancelling the Android dialog (capture stays off).
-7. Turn the accessibility service off during a control session. Input stops
+7. Choose **No thanks**: settings must not open. Enable the service in Android
+   settings without consent: control must stay off. Then agree, start control,
+   and withdraw consent: input stops.
+8. Turn the accessibility service off during a control session. Input stops
    and the card links back to settings.
-8. Check the session diagnostics (`[machine-session]` in logcat) for
+9. Check the session diagnostics (`[machine-session]` in logcat) for
    `remote:*` events. They hold no credentials, URLs, or input contents.

@@ -14,6 +14,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PhaseZeroScreen from '../screens/PhaseZeroScreen';
 import useRemoteRequest from '../features/remote-support/useRemoteRequest';
+import RemoteControlConsentPrompt from '../features/remote-support/RemoteControlConsentPrompt';
 import RemoteRequestPrompt from '../features/remote-support/RemoteRequestPrompt';
 import ScreenPeer from '../features/remote-support/ScreenPeer';
 import RemoteSupportScreen from '../screens/RemoteSupportScreen';
@@ -55,6 +56,7 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
           {device.machine.label}  ·  <Text style={status === 'connected' && styles.connected}>{CONNECTION_LABELS[status]}</Text>  ·  Staging
         </Text>
       </View>
+      <RemoteControlConsentPrompt />
       <RemoteRequestPrompt {...remoteRequest} />
       {remoteRequest.activeId &&
         remoteRequest.activeId === remoteRequest.approvedId && (
