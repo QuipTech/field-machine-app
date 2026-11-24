@@ -1,10 +1,6 @@
 import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { z } from 'zod';
-
-const pendingSchema = z.array(
-  z.object({ id: z.string().uuid(), fileName: z.string().min(1) }),
-);
-const responseSchema = z.object({ status: z.number().int(), body: z.string() });
+import { pendingSchema, responseSchema, uploadProgressSchema } from './portalTransferSchema';
 
 export type PendingTransfer = z.infer<typeof pendingSchema>[number];
 
@@ -34,7 +30,7 @@ const portalTransfer = {
     responseSchema.parse(await getNativeModule().upload(url, token, pairing, id)),
   subscribe: (listener: (id: string, percent: number) => void) =>
     DeviceEventEmitter.addListener('fieldPortalUploadProgress', (value: unknown) => {
-      const event = z.object({ id: z.string(), percent: z.number() }).safeParse(value);
+      const event = uploadProgressSchema.safeParse(value);
       if (event.success) {
         listener(event.data.id, event.data.percent);
       }

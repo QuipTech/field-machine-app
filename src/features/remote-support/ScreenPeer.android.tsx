@@ -20,6 +20,8 @@ const PREPARATION_TIMEOUT_MS = 10000;
 const CONNECTION_INTERRUPTED = 'The tablet connection dropped. Retry screen sharing after it reconnects.';
 const UNCONFIRMED = 'The tablet could not confirm the remote session. Screen sharing stopped.';
 
+export const supportsDesktopControl = true;
+
 // Module-level so effects can call it without depending on a new closure.
 const stopSharing = (peer: RefObject<(() => void) | undefined>) => {
   peer.current?.();

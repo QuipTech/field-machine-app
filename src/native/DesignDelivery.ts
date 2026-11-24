@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 
-interface NativeDesignDelivery {
+export interface NativeDesignDelivery {
   readJournal: (scope: string) => Promise<string>;
   writeJournal: (scope: string, payload: string) => Promise<void>;
   prepare: (scope: string, delivery: string, project: string) => Promise<void>;

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PortalTransferModule.h"
 #include "PortalTransferStorage.h"
+#include "PortalTransferUpload.h"
 #include <shobjidl_core.h>
 #include <winrt/Windows.Storage.FileProperties.h>
 #include <winrt/Windows.Storage.Pickers.h>
@@ -122,5 +123,29 @@ void PortalTransferModule::remove(std::string pairing, std::string id,
   Complete(promise, [&]() {
     fs::remove_all(PendingTransfer(pairing, id));
   });
+}
+
+static winrt::fire_and_forget UploadFile(std::string url, std::string token,
+    std::string pairing, std::string id, React::ReactContext context,
+    React::ReactPromise<React::JSValue> promise) {
+  try {
+    auto response = co_await UploadPortalFile(std::move(url), std::move(token), std::move(pairing), id,
+        [context, id](int percent) noexcept {
+          context.EmitJSEvent(L"RCTDeviceEventEmitter", L"fieldPortalUploadProgress",
+              React::JSValueObject{{"id", id}, {"percent", percent}});
+        });
+    auto body = co_await response.Content().ReadAsStringAsync();
+    promise.Resolve(React::JSValue(React::JSValueObject{
+        {"status", static_cast<int>(response.StatusCode())}, {"body", winrt::to_string(body)}}));
+  } catch (std::invalid_argument const &) {
+    promise.Resolve(React::JSValue(React::JSValueObject{{"status", 400}, {"body", ""}}));
+  } catch (...) {
+    promise.Reject("The upload could not reach the Portal.");
+  }
+}
+
+void PortalTransferModule::upload(std::string url, std::string token, std::string pairing,
+    std::string id, React::ReactPromise<React::JSValue> promise) noexcept {
+  UploadFile(std::move(url), std::move(token), std::move(pairing), std::move(id), m_context, promise);
 }
 }

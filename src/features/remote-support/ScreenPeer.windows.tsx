@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
 
 const CONNECTION_INTERRUPTED = 'The tablet connection dropped. Retry screen sharing after it reconnects.';
 
+export const supportsDesktopControl = true;
+
 const ScreenPeer = ({ sessionId, deviceToken, isConnected, canControl }: ScreenPeerProps) => {
   const webView = useRef<WebView>(null);
   const injectedUrl = useRef<string>(undefined);

@@ -7,8 +7,8 @@ import type useRemoteRequest from './useRemoteRequest';
 
 const RemoteRequestPrompt = ({
   request, activeId, approvedId, isControlRequested, isRecordingExpected, recordingStatus,
-  isSubmitting, error, onAction, onResume,
-}: ReturnType<typeof useRemoteRequest>) => (
+  isSubmitting, error, onAction, onResume, supportsDesktopControl,
+}: ReturnType<typeof useRemoteRequest> & { supportsDesktopControl: boolean }) => (
   <>
     {request && (
       <View style={styles.card}>
@@ -19,10 +19,11 @@ const RemoteRequestPrompt = ({
         <Text style={styles.body}>
           {request.scope.control ? 'Desktop viewing and control requested.' : 'Desktop viewing requested.'}
           {request.scope.record ? ' The Portal will record an approved session.' : ''}
+          {request.scope.control && !supportsDesktopControl ? ' This build supports viewing only.' : ''}
         </Text>
         <Text style={styles.body}>After approval, choose a window for viewing only or share the entire screen.</Text>
         <View style={styles.row}>
-          {request.scope.view && request.scope.control && (
+          {supportsDesktopControl && request.scope.view && request.scope.control && (
             <ActionButton title="Allow with control access" disabled={isSubmitting}
               onPress={() => onAction(request.id, { decision: 'allow', allowControl: true })} />
           )}
@@ -53,7 +54,7 @@ const RemoteRequestPrompt = ({
               Approve screen sharing on this tablet for this session.
             </Text>
             <View style={styles.row}>
-              {isControlRequested && (
+              {supportsDesktopControl && isControlRequested && (
                 <ActionButton title="Allow with control access" disabled={isSubmitting}
                   onPress={() => onResume(true)} />
               )}

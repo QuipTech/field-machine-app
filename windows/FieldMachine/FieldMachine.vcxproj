@@ -133,9 +133,13 @@
     <ClCompile Include="Native\CaptureSnapshot.cpp" />
     <ClCompile Include="Native\PhaseZeroModules.cpp" />
     <ClCompile Include="Native\PortalTransferModule.cpp" />
-    <ClCompile Include="Native\PortalTransferUpload.cpp" />
+    <ClCompile Include="Native\PortalTransferUpload.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Native\DesignDeliveryModule.cpp" />
-    <ClCompile Include="Native\DesignDeliveryDownload.cpp" />
+    <ClCompile Include="Native\DesignDeliveryDownload.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="Native\PortalTransferModule.h" />
     <ClInclude Include="Native\PortalTransferStorage.h" />
     <ClInclude Include="Native\NativeHelpers.h" />
