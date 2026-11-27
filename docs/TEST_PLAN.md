@@ -48,7 +48,9 @@ input delivery; verify visible frames and the input target on Windows.
 2. Run `npm ci`.
 3. Use the checked-in `cpp-app` project; do not reinitialize over native changes.
 4. Follow `WINDOWS_PHASE_ZERO.md` for toolchain and native checks.
-5. Run `npm run windows` and confirm the test screen appears.
+5. For remote support across Windows users, follow `WINDOWS_MULTI_USER_SUPPORT.md`;
+   for FIELD ID access, follow `FIELD_ID_TEST_PLAN.md`.
+6. Run `npm run windows` and confirm the test screen appears.
 
 ## External folder
 

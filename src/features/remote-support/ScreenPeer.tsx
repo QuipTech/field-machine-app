@@ -3,6 +3,8 @@ export interface ScreenPeerProps {
   deviceToken: string;
   isConnected: boolean;
   canControl: boolean;
+  // Portal transfer queue for files dropped on the Windows support panel.
+  transferPairing?: string;
 }
 
 export const supportsDesktopControl = false;

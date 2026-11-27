@@ -20,6 +20,7 @@ interface MockPortalSession {
   deviceId: string;
   machineId: string;
   status: 'requested' | 'active';
+  access?: 'prompt' | 'unattended';
   requester: { name: string };
   scope: { view: boolean; control: boolean; record: boolean };
   expiresAt: string;
@@ -108,7 +109,7 @@ test('mock Portal request asks for consent and opens the peer only after approva
   await pressButton(root, 'Allow view only');
 
   expect(decisions).toEqual([{ decision: 'allow', allowControl: false }]);
-  expect(findButton(root, 'End remote access')).toBeDefined();
+  expect(findButton(root, 'End session')).toBeDefined();
   expect(root.findByType(ScreenPeer).props).toMatchObject({ sessionId, canControl: false });
 });
 
@@ -122,6 +123,21 @@ test('the periodic check finds a request even without a notification and lets th
   expect(decisions).toEqual([{ decision: 'decline' }]);
   expect(findButton(root, 'Decline')).toBeUndefined();
   expect(root.findAllByType(ScreenPeer)).toHaveLength(0);
+});
+
+test('an unattended session streams at once with no prompt and obeys view only', async () => {
+  const root = await startWorkspace();
+  session = {
+    id: sessionId, deviceId: device.deviceId, machineId: device.machine.id, status: 'active',
+    access: 'unattended', requester: { name: 'Sam Support' },
+    scope: { view: true, control: false, record: true }, expiresAt: new Date(0).toISOString(),
+  };
+  await act(async () => { jest.advanceTimersByTime(10000); });
+
+  expect(findButton(root, 'Allow view only')).toBeUndefined();
+  expect(findButton(root, 'End session')).toBeDefined();
+  expect(root.findByType(ScreenPeer).props).toMatchObject({ sessionId, canControl: false });
+  expect(decisions).toEqual([]);
 });
 
 test('an incoming request for a different paired device never shows an approval prompt', async () => {

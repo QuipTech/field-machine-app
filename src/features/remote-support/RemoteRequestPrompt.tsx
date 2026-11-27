@@ -38,14 +38,13 @@ const RemoteRequestPrompt = ({
     )}
     {activeId && (
       <View style={styles.card}>
-        <Text accessibilityLiveRegion="polite" style={styles.heading}>Portal session active</Text>
+        <Text accessibilityLiveRegion="polite" style={styles.heading}>Remote session active</Text>
         {isRecordingExpected && (
           <Text
             accessibilityLiveRegion="polite"
             style={[styles.body, recordingStatus === 'failed' ? styles.error : styles.warning]}
           >
-            {recordingStatus === 'failed' ? 'Recording failed'
-              : recordingStatus === 'recording' ? 'Recording' : 'Recording enabled'}
+            {recordingStatus === 'failed' ? 'Recording failed' : 'Recording'}
           </Text>
         )}
         {activeId !== approvedId && (
@@ -64,7 +63,7 @@ const RemoteRequestPrompt = ({
           </>
         )}
         <ActionButton
-          title="End remote access"
+          title="End session"
           variant="danger"
           disabled={isSubmitting}
           onPress={() => onAction(activeId, 'end')}

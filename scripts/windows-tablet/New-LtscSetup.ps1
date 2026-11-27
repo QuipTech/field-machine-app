@@ -21,7 +21,7 @@ $csc = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $uninstall = Join-Path $PSScriptRoot 'Uninstall-Ltsc.ps1'
 & $csc /nologo /target:winexe /platform:x64 "/out:$setup" `
   "/resource:$($payload.FullName),FieldMachine.App" "/resource:$uninstall,FieldMachine.Uninstall" `
-  /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll (Join-Path $PSScriptRoot 'LtscSetup.cs')
+  /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll (Join-Path $PSScriptRoot 'LtscSetup.cs') (Join-Path $PSScriptRoot 'SetupShared.cs')
 if ($LASTEXITCODE -ne 0) { throw 'LTSC setup compilation failed.' }
 if ($SignTool) {
   & $SignTool sign /fd SHA256 /sha1 $CertificateThumbprint $setup

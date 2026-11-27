@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PairingScreen from '../screens/PairingScreen';
+import TabletAccessScreen from '../screens/TabletAccessScreen';
+import tabletAccessStore from '../native/TabletAccessStore';
 import PhaseZeroScreen from '../screens/PhaseZeroScreen';
 import useDeviceConnection from '../features/connection/useDeviceConnection';
 import usePairingStore from '../features/pairing/usePairingStore';
@@ -35,12 +37,13 @@ const MachineApp = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <ActionButton
-          title={isDiagnosticsOpen ? 'Back to pairing' : 'Diagnostics'}
+          title={isDiagnosticsOpen ? 'Back' : 'Diagnostics'}
           onPress={() => setIsDiagnosticsOpen(isOpen => !isOpen)}
         />
       </View>
       <View style={styles.content}>
-        {isDiagnosticsOpen ? <PhaseZeroScreen /> : <PairingScreen />}
+        {isDiagnosticsOpen ? <PhaseZeroScreen />
+          : tabletAccessStore.isSupported ? <TabletAccessScreen /> : <PairingScreen />}
       </View>
     </View>
   );

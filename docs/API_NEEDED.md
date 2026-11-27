@@ -1,5 +1,7 @@
 # Confirmed pairing API
 
+FIELD ID access (replaces code pairing on Windows): see [API_TABLET_ACCESS.md](API_TABLET_ACCESS.md).
+
 ## Tablet-initiated disconnect — supplied 2026-11-17
 
 - DELETE `<apiBaseUrl>/mc/device/session`; Authorization Bearer deviceToken.

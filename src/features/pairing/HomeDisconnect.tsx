@@ -3,6 +3,11 @@ import { Modal, Text, View } from 'react-native';
 import ActionButton from '../../components/ActionButton';
 import styles from './pairingStyles';
 import usePairingStore from './usePairingStore';
+import tabletAccessStore from '../../native/TabletAccessStore';
+
+const DISCONNECT_TEXT = tabletAccessStore.isSupported
+  ? 'This removes the tablet from its machine. The FIELD ID stays. A Portal user can add it again only with the tablet password, which is not stored on this tablet.'
+  : 'This removes the machine pairing. To reconnect, pair again using a code from the Portal.';
 
 const HomeDisconnect = () => {
   const [isConfirming, setIsConfirming] = useState(false);
@@ -29,7 +34,7 @@ const HomeDisconnect = () => {
         <View style={styles.overlay}>
           <View style={styles.dialog} accessibilityViewIsModal>
             <Text style={styles.heading}>Disconnect this tablet?</Text>
-            <Text style={styles.text}>This removes the machine pairing. To reconnect, pair again using a code from the Portal.</Text>
+            <Text style={styles.text}>{DISCONNECT_TEXT}</Text>
             <ActionButton title="Cancel" onPress={close} />
             <View style={styles.action}>
               <ActionButton title="Confirm disconnect" variant="danger" onPress={disconnect} />

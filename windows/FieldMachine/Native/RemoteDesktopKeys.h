@@ -1,5 +1,6 @@
 #pragma once
 #include <string_view>
+#include <utility>
 
 namespace FieldMachine::Native {
 inline WORD RemoteVirtualKey(std::string_view code) noexcept {

@@ -10,7 +10,11 @@ using winrt::Windows::Data::Json::JsonObject;
 using winrt::Windows::Data::Json::JsonValue;
 
 HRESULT RegisterFileBridge(ICoreWebView2 *view, HWND window);
+HRESULT RegisterInputSafety(ICoreWebView2 *view);
+void StopRemoteInput() noexcept;
+winrt::Windows::Foundation::IAsyncOperation<IJsonValue> RunInputOperation(JsonObject message);
 winrt::Windows::Foundation::IAsyncOperation<IJsonValue> RunDesignOperation(JsonObject message);
+winrt::Windows::Foundation::IAsyncOperation<IJsonValue> RunAccessOperation(JsonObject message);
 winrt::Windows::Foundation::IAsyncOperation<IJsonValue> RunPortalFileOperation(
     JsonObject message, Microsoft::WRL::ComPtr<ICoreWebView2> view, HWND window);
 }

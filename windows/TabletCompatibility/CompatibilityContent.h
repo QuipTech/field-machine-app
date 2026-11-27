@@ -4,6 +4,12 @@
 HRESULT ServeCompatibilityResource(ICoreWebView2Environment *environment,
     ICoreWebView2WebResourceRequestedEventArgs *args);
 
+#ifdef FIELD_MACHINE_DEBUG
+constexpr BOOL DevToolsEnabled = TRUE; // F12 and the local debug port, debug builds only.
+#else
+constexpr BOOL DevToolsEnabled = FALSE;
+#endif
+
 #ifdef FIELD_MACHINE_COMPATIBILITY_APP
 constexpr wchar_t PageUrl[] = L"https://staging-api.quiptechfield.com.au/_field_ltsc_/app";
 constexpr wchar_t BundleUrl[] = L"https://staging-api.quiptechfield.com.au/_field_ltsc_/bundle.js";

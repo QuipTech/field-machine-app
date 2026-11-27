@@ -16,6 +16,8 @@ import PhaseZeroScreen from '../screens/PhaseZeroScreen';
 import useRemoteRequest from '../features/remote-support/useRemoteRequest';
 import RemoteRequestPrompt from '../features/remote-support/RemoteRequestPrompt';
 import ScreenPeer, { supportsDesktopControl } from '../features/remote-support/ScreenPeer';
+import useDesktopPanel from '../features/remote-support/useDesktopPanel';
+import useDeliveryNotice from '../features/remote-support/useDeliveryNotice';
 import RemoteSupportScreen from '../screens/RemoteSupportScreen';
 import styles from '../components/workspaceStyles';
 
@@ -41,8 +43,10 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
   const status = useConnectionStore(state => state.status);
   const isDisconnecting = usePairingStore(state => state.status === 'disconnecting');
   const remoteRequest = useRemoteRequest(device, !isDisconnecting);
+  useDesktopPanel(device, remoteRequest.activeId, remoteRequest.onAction, remoteRequest.isRecordingExpected);
   const scope = getTransferPairing(device);
   const currentDelivery = delivery?.scope === scope ? delivery : undefined;
+  useDeliveryNotice(currentDelivery?.projects);
 
   const deliveryMessage = currentDelivery?.message ?? (designStorage
     ? 'Checking saved projects…' : 'Install the latest FIELD Machine app to receive designs.');
@@ -64,6 +68,7 @@ const MachineWorkspace = ({ device, delivery }: Props) => {
           deviceToken={device.deviceToken}
           isConnected={status === 'connected'}
           canControl={remoteRequest.canControl}
+          transferPairing={scope}
         />
       )}
       <View style={styles.content}>

@@ -8,6 +8,7 @@
 #include "CompatibilityContent.h"
 #ifdef FIELD_MACHINE_COMPATIBILITY_APP
 #include "CompatibilityFileBridge.h"
+#include "CompatibilityTray.h"
 #endif
 
 using Microsoft::WRL::Callback;
@@ -33,8 +34,8 @@ HRESULT LoadPicker(HWND window, ICoreWebView2Environment *environment) {
     if (FAILED(result)) return result;
     ComPtr<ICoreWebView2Settings> settings;
     if (SUCCEEDED(view->get_Settings(&settings))) {
-        settings->put_AreDevToolsEnabled(FALSE);
-        settings->put_AreDefaultContextMenusEnabled(FALSE);
+        settings->put_AreDevToolsEnabled(DevToolsEnabled);
+        settings->put_AreDefaultContextMenusEnabled(DevToolsEnabled);
         settings->put_AreHostObjectsAllowed(FALSE);
     }
     result = view->AddWebResourceRequestedFilter(PageUrl, COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
@@ -145,13 +146,19 @@ HRESULT StartWebView(HWND window) {
 }
 
 LRESULT CALLBACK ProcessWindow(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
-    if (message == WM_SIZE && controller) {
+    if ((message == WM_SIZE || (message == WM_SHOWWINDOW && wparam)) && controller) {
         RECT bounds{};
         GetClientRect(window, &bounds);
         controller->put_Bounds(bounds);
+        // A WebView created under a hidden window (tray start) stays blank until re-shown.
+        if (message == WM_SHOWWINDOW) controller->put_IsVisible(FALSE);
+        if (message == WM_SHOWWINDOW) controller->put_IsVisible(TRUE);
     }
     if (message == WM_MOVE && controller) controller->NotifyParentWindowPositionChanged();
     if (message == WM_DESTROY) {
+#ifdef FIELD_MACHINE_COMPATIBILITY_APP
+        FieldMachine::Compatibility::StopRemoteInput();
+#endif
         if (controller) controller->Close();
         controller.Reset();
         PostQuitMessage(0);
@@ -175,6 +182,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         CW_USEDEFAULT, CW_USEDEFAULT, 980, 680, nullptr, nullptr, instance, nullptr);
     int exitCode = 1;
     if (window) {
+#ifdef FIELD_MACHINE_COMPATIBILITY_APP
+        show = FieldMachine::Compatibility::PrepareTabletShell(window, show);
+#endif
         ShowWindow(window, show);
         const HRESULT result = StartWebView(window);
         if (FAILED(result)) ReportFailure(window, L"Could not initialize the compatibility probe", result);

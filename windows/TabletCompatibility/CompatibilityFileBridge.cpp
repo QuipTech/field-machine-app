@@ -3,6 +3,7 @@
 #include <cwchar>
 #include "CompatibilityFileBridge.h"
 #include "CompatibilityContent.h"
+#include "CompatibilityDesktop.h"
 #include "../FieldMachine/Native/PortalTransferStorage.h"
 
 namespace FieldMachine::Compatibility {
@@ -14,7 +15,10 @@ winrt::fire_and_forget Respond(Microsoft::WRL::ComPtr<ICoreWebView2> view,
         response.SetNamedValue(L"type", JsonValue::CreateStringValue(type));
         response.SetNamedValue(L"id", JsonValue::CreateStringValue(id));
         try {
-            auto operation = type == L"field-design" ? RunDesignOperation(std::move(message))
+            auto operation = type == L"field-input" ? RunInputOperation(std::move(message))
+                : type == L"field-design" ? RunDesignOperation(std::move(message))
+                : type == L"field-desktop" ? RunDesktopOperation(std::move(message))
+                : type == L"field-access" ? RunAccessOperation(std::move(message))
                 : RunPortalFileOperation(std::move(message), view, window);
             response.SetNamedValue(L"value", co_await operation);
             response.SetNamedValue(L"ok", JsonValue::CreateBooleanValue(true));
@@ -46,7 +50,8 @@ HRESULT OnMessage(ICoreWebView2 *view, ICoreWebView2WebMessageReceivedEventArgs 
             return S_OK;
         }
         auto type = message.GetNamedString(L"type", L"");
-        if (type != L"field-design" && type != L"field-portal-files") return S_OK;
+        if (type != L"field-input" && type != L"field-design" && type != L"field-portal-files" &&
+            type != L"field-desktop" && type != L"field-access") return S_OK;
         auto id = message.GetNamedString(L"id", L"");
         if (id.size() == 36 && Native::IsTransferId(winrt::to_string(id))) {
             Respond(Microsoft::WRL::ComPtr<ICoreWebView2>(view), std::move(message),
@@ -60,6 +65,9 @@ HRESULT OnMessage(ICoreWebView2 *view, ICoreWebView2WebMessageReceivedEventArgs 
 }
 
 HRESULT RegisterFileBridge(ICoreWebView2 *view, HWND window) {
+    const HRESULT safety = RegisterInputSafety(view);
+    if (FAILED(safety)) return safety;
+    RegisterDesktopView(Microsoft::WRL::ComPtr<ICoreWebView2>(view));
     EventRegistrationToken token{};
     auto callback = Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
         [window](ICoreWebView2 *sender, ICoreWebView2WebMessageReceivedEventArgs *args) {

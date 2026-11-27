@@ -9,7 +9,7 @@ const replySchema = z.object({
 });
 
 const ltscNativeRequest = <Value>(
-  type: 'field-design' | 'field-portal-files',
+  type: 'field-design' | 'field-portal-files' | 'field-input' | 'field-desktop' | 'field-access',
   operation: string,
   schema: z.ZodType<Value>,
   argumentsForHost: Record<string, string | number> = {},

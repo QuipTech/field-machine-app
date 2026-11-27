@@ -5,6 +5,9 @@
 #include <cwchar>
 #include <string>
 #include "CompatibilityContent.h"
+#ifdef FIELD_MACHINE_COMPATIBILITY_APP
+#include "CompatibilityFileBridge.h"
+#endif
 
 using Microsoft::WRL::ComPtr;
 
@@ -19,6 +22,7 @@ bool HasLoadedCompatibilityResources() {
 }
 
 void ResetCompatibilityResources() {
+    FieldMachine::Compatibility::StopRemoteInput();
     pageServed = false;
     bundleServed = false;
 }

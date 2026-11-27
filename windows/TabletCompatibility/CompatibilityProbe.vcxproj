@@ -27,6 +27,11 @@
     <TargetName>FieldMachine-LTSC2019-Pairing-x64</TargetName>
     <IntDir>$(MSBuildThisFileDirectory)x64\Release\Tablet\</IntDir>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(FieldMachineDebug)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions>FIELD_MACHINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -49,7 +54,7 @@
       <PreprocessorDefinitions>FIELD_MACHINE_COMPATIBILITY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>windowsapp.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>windowsapp.lib;shell32.lib;crypt32.lib;comctl32.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -57,6 +62,13 @@
     <ClCompile Include="CompatibilityResources.cpp" />
     <ClCompile Include="CompatibilityStorage.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
     <ClCompile Include="CompatibilityFileBridge.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityInput.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityDesktop.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityDesktopLink.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityTray.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityAccessStorage.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="CompatibilityDesktopLocal.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
+    <ClCompile Include="..\DesktopHost\DesktopCapture.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
     <ClCompile Include="CompatibilityDesign.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
     <ClCompile Include="CompatibilityPortalFiles.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />
     <ClCompile Include="..\FieldMachine\Native\DesignDeliveryDownload.cpp" Condition="'$(FieldMachineCompatibilityApp)' == 'true'" />

@@ -84,12 +84,34 @@ installer remains available. Close the running app before installing the update.
 - Record Windows and WebView2 versions and the redacted Diagnostics timeline
   for any failed step. Verify on Ht-667 before using this build for cab support.
 
-The tablet build reuses the Portal's Kinesis WebRTC flow for view-only sharing.
+The tablet build reuses the Portal's Kinesis WebRTC flow for screen sharing.
 Selected document uploads are staged in app-managed storage. Design downloads
-reuse the Windows range and SHA-256 implementation. Remote desktop control,
-brand-folder reads and writes, and scheduled returns remain open on LTSC.
+reuse the Windows range and SHA-256 implementation. Brand-folder
+reads and writes, and scheduled returns remain open on LTSC. Remote desktop
+control is implemented for an approved whole-screen share on one monitor. Its
+live Portal workflow is untested. Windows blocks it in administrator windows.
 
 The November 22, 2026 Release x64 staging build compiled with the WebView2
 1.0.3179.45 SDK. The setup payload matched the compiled executable by SHA-256.
 Both executables are unsigned. The updated setup and its live staging
 workflows have yet to be tested on the workshop tablet.
+
+The November 24, 2026 Release x64 staging build is
+`FieldMachine-LTSC2019-Setup-x64-test.exe`. The app and setup are signed by a
+new self-signed `CN=FIELD` test publisher, thumbprint
+`2D6FA69DA58D72F2120DAA1C3A5AF0B363F3059F`, expiring November 24, 2027. Its key
+is in CurrentUser/My on the build PC; the earlier publisher key is not there.
+The public certificate is `compatibility/FIELD-Test-Publisher.cer`. Signatures
+are untrusted until an administrator installs it, and are not timestamped.
+The setup payload matched the signed app by SHA-256. On build 17763 the app
+started, restored the Ht-667 pairing and showed Connected to staging. Setup
+installation, Files and remote support were not exercised in this check.
+
+## Support request does not appear
+
+`FieldMachine-LTSC2019-Setup-x64-test2.exe` (November 25, 2026) reports why a
+request is hidden. The app hides a request whose expiry has passed on the
+tablet clock, so a fast clock can hide every request while the header still
+shows Connected. Set Windows date and time automatically, then open **Remote
+Support** for the message and **Settings > Diagnostics** for `remote:check`.
+Close the app on any other PC paired to the same machine during the test.

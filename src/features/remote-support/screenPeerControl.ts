@@ -7,7 +7,7 @@ const screenPeerControl = `
       controlChannel = channel;
       channel.onmessage = message => {
         if (attempt !== generation || currentPeer.connectionState !== 'connected' ||
-            track.getSettings().displaySurface !== 'monitor' ||
+            surface !== 'monitor' ||
             track.muted || track.readyState !== 'live' || channel.readyState !== 'open' ||
             typeof message.data !== 'string' || message.data.length > 8192) return;
         try {

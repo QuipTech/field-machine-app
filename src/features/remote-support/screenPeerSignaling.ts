@@ -48,7 +48,8 @@ const screenPeerSignaling = `
           if (audio) {
             const microphoneTrack = capture.getAudioTracks()[0];
             if (microphoneTrack) await audio.sender.replaceTrack(microphoneTrack);
-            audio.direction = microphoneTrack ? 'sendrecv' : 'recvonly';
+            // Desktop sharing keeps a send slot so the panel's Mic button needs no renegotiation.
+            audio.direction = microphoneTrack || config.desktop ? 'sendrecv' : 'recvonly';
           }
           for (const candidate of pendingIce) await addIce(candidate);
           await currentPeer.setLocalDescription(await currentPeer.createAnswer());

@@ -2,6 +2,7 @@ import screenPeerStyles from './screenPeerStyles';
 import screenPeerIce from './screenPeerIce';
 import screenPeerSignaling from './screenPeerSignaling';
 import screenPeerControl from './screenPeerControl';
+import screenPeerDesktop from './screenPeerDesktop';
 
 export const createScreenPeerPage = (bridge: string) => `<!doctype html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -24,6 +25,7 @@ window.enableFieldScreenPicker = credentials => {
   config = credentials;
   share.disabled = false;
   reportPickerEvent('screen-picker-ready');
+  if (config.desktop) share.onclick();
 };
 retry.onclick = () => reportPickerEvent('reconnect-screen-peer');
 let stream;
@@ -36,6 +38,7 @@ const stop = message => {
   if (socket) socket.close();
   if (stream) stream.getTracks().forEach(track => track.stop());
   supportAudio.srcObject = null;
+  stopDesktopCapture();
   peer = socket = stream = undefined;
   reportPickerEvent('control-release');
   if (message) {
@@ -49,6 +52,7 @@ const encode = value => btoa(Array.from(new TextEncoder().encode(JSON.stringify(
   byte => String.fromCharCode(byte)).join(''));
 const decode = value => JSON.parse(new TextDecoder().decode(
   Uint8Array.from(atob(value), byte => byte.charCodeAt(0))));
+${screenPeerDesktop}
 share.onclick = async () => {
   if (!window.isSecureContext || !navigator.mediaDevices?.getDisplayMedia) {
     status.textContent = 'The Windows WebView runtime does not expose a screen picker.';
@@ -58,7 +62,7 @@ share.onclick = async () => {
   retry.hidden = true;
   const attempt = ++generation;
   try {
-    const capture = await navigator.mediaDevices.getDisplayMedia({
+    const capture = config.desktop ? window.startFieldDesktopCapture() : await navigator.mediaDevices.getDisplayMedia({
       video: { width: { max: 1920 },
         height: { max: 1080 }, frameRate: { max: 15 } },
       audio: false
@@ -69,7 +73,7 @@ share.onclick = async () => {
     }
     stream = capture;
     const track = capture.getVideoTracks()[0];
-    const surface = track.getSettings().displaySurface;
+    const surface = config.desktop ? 'monitor' : track.getSettings().displaySurface;
     if (surface !== 'monitor' && surface !== 'window') {
       stop('Select a window or an entire screen to continue.');
       share.disabled = false;
