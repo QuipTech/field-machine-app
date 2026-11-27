@@ -50,7 +50,7 @@ const RemoteInputSetup = () => {
     <View>
       <Text accessibilityLiveRegion="polite" style={styles.body}>
         {isEnabled
-          ? 'Remote control is set up. Portal support can control this tablet only during a session where you allow control.'
+          ? 'Remote control is set up. Portal support can control this tablet only while a session is active and your screen is shared.'
           : `One step left: open Accessibility settings, choose “${SERVICE_NAME}” (under Downloaded or Installed apps), and turn it on.`}
       </Text>
       {error && <Text accessibilityLiveRegion="polite" style={[styles.body, styles.error]}>{error}</Text>}

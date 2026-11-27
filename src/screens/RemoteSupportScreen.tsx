@@ -11,7 +11,7 @@ const RemoteSupportScreen = ({ checkError }: { checkError?: string }) => (
     <View style={styles.card}>
       <Text style={styles.heading}>Portal support</Text>
       <Text style={styles.body}>
-        Approve an incoming request, then share this tablet’s screen. Portal support can control the tablet only if you allow control.
+        Share this tablet’s screen during a session. Support staff with the tablet password can start a session without asking; other requests need your approval.
       </Text>
       <RemoteInputSetup />
       <View style={styles.row}>
