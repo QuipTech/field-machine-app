@@ -9,7 +9,7 @@ code and tests. No tablet has registered on staging yet.
 
 | Call | Auth | Body | Success |
 | --- | --- | --- | --- |
-| `POST /mc/device/register` | none, or `Bearer <deviceToken>` to upgrade | `{ password, platform: "windows", appVersion }` | `201 { fieldId, tabletToken }` |
+| `POST /mc/device/register` | none, or `Bearer <deviceToken>` to upgrade | `{ password, platform: "windows" \| "android", appVersion }` | `201 { fieldId, tabletToken }` |
 | `GET /mc/device/registration` | `Bearer <tabletToken>` | — | `200 { fieldId, assigned, machine: { id, label } \| null }` |
 | `PUT /mc/device/registration/password` | `Bearer <tabletToken>` | `{ password }` | `204` |
 | `POST /mc/device/registration/session` | `Bearer <tabletToken>` | — | `200 { deviceId, deviceToken, machine }` |
@@ -63,3 +63,17 @@ as they can already use the app.
 - After a tablet removes itself (Disconnect), its password is already deleted
   locally and cannot be changed on the tablet (`409`). Re-adding needs a new
   FIELD ID (**Register as a new tablet**), per the contract's known limitation.
+
+## Android (added 2026-11-27)
+
+- Same flow and screens as Windows LTSC. The access record is encrypted with an
+  Android Keystore key (`src/native/TabletAccessStore.android.ts`).
+- The tablet password uses Java `SecureRandom`
+  (`FieldMachineSecureRandom`), because Hermes has no Web Crypto.
+- Verified on an API 35 emulator against staging: registration, adding by
+  FIELD ID in the Portal, reconnect after restart, and an unattended session.
+- Android cannot stream with no prompt: the operator must tap **Share screen**
+  and confirm the system capture dialog for each session.
+- Open: the Portal reported that the recording of the Android session could not
+  be saved ("The viewer could not record this session").
+

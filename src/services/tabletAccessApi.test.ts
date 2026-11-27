@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import tabletAccessApi from './tabletAccessApi';
 
 const TOKEN = 'a'.repeat(43);
@@ -23,6 +24,14 @@ test('register sends only contract fields and parses the reply', async () => {
   expect(url).toBe('https://staging-api.quiptechfield.com.au/mc/device/register');
   expect(options.headers.Authorization).toBeUndefined();
   expect(Object.keys(JSON.parse(options.body)).sort()).toEqual(['appVersion', 'password', 'platform']);
+});
+
+test('an Android tablet registers as android', async () => {
+  const replaced = jest.replaceProperty(Platform, 'OS', 'android');
+  mockFetch.mockReturnValue(reply(201, { fieldId: '482915307', tabletToken: TOKEN }));
+  await tabletAccessApi.register('Rk7p-Q2mW-x9tH');
+  expect(JSON.parse(mockFetch.mock.calls[0][1].body).platform).toBe('android');
+  replaced.restore();
 });
 
 test('the upgrade call carries the device token', async () => {

@@ -12,7 +12,7 @@ interface Props {
   onOpenDiagnostics: () => void;
 }
 
-// Windows shows the FIELD ID and machine; other platforms keep code pairing.
+// Android and Windows LTSC show the FIELD ID; other builds keep code pairing.
 const SettingsScreen = ({ onOpenDiagnostics }: Props) => {
   const load = useTabletAccessStore(state => state.load);
   useEffect(() => {

@@ -20,7 +20,7 @@ const accessSecureStorage = <T>(operation: () => Promise<T>): Promise<T> => {
   return pending;
 };
 
-// Code pairing saved by earlier builds. On Windows it is read once, to upgrade
+// Code pairing saved by earlier builds. It is read once, to upgrade
 // the tablet to FIELD ID access, then removed.
 const readLegacyPairing = async (): Promise<PairedDevice | null> => {
   const savedPairing = await accessSecureStorage(() =>
@@ -39,7 +39,7 @@ const readLegacyPairing = async (): Promise<PairedDevice | null> => {
   }
 };
 
-// Windows keeps the device in the FIELD ID access record (DPAPI, whole tablet).
+// FIELD ID tablets keep the device in the encrypted access record.
 const readSavedPairing = async (): Promise<PairedDevice | null> => {
   if (!tabletAccessStore.isSupported) return readLegacyPairing();
   const record = await tabletAccessStore.read();
@@ -83,7 +83,7 @@ const removeLegacyPairing = async (): Promise<void> => {
   );
 };
 
-// On Windows this drops only the device token; the FIELD ID and tablet token
+// With FIELD ID access this drops only the device token; the FIELD ID and tablet token
 // stay so the tablet can be re-added and reconnect.
 const forgetPairing = async (): Promise<void> => {
   if (tabletAccessStore.isSupported) {

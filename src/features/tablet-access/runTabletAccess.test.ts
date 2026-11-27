@@ -25,7 +25,7 @@ const setup = (api: Partial<typeof tabletAccessApi>, saved: TabletAccessRecord |
     api: api as typeof tabletAccessApi,
     readLegacyPairing: async () => legacyPairing,
     removeLegacyPairing: jest.fn(async () => undefined),
-    generatePassword: () => 'Rk7p-Q2mW-x9tH',
+    generatePassword: async () => 'Rk7p-Q2mW-x9tH',
     wait: async () => undefined,
     isCancelled: () => false,
     onUpdate: jest.fn(),

@@ -18,7 +18,7 @@ export interface AccessDeps {
   api: typeof tabletAccessApi;
   readLegacyPairing: () => Promise<PairedDevice | null>;
   removeLegacyPairing: () => Promise<void>;
-  generatePassword: () => string;
+  generatePassword: () => Promise<string>;
   wait: (ms: number) => Promise<void>;
   isCancelled: () => boolean;
   onUpdate: (update: AccessUpdate) => void;
@@ -49,7 +49,7 @@ const runTabletAccess = async (deps: AccessDeps): Promise<TabletAccessRecord> =>
 
   const register = async (): Promise<TabletAccessRecord> => {
     const legacy = await deps.readLegacyPairing().catch(() => null);
-    const password = deps.generatePassword();
+    const password = await deps.generatePassword();
     onUpdate({ phase: 'registering' });
     let result = await call(() => api.register(password, legacy?.deviceToken), { phase: 'registering' });
     let isUpgrade = Boolean(legacy);

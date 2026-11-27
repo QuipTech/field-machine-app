@@ -79,7 +79,7 @@ class SecureStoreModule(reactContext: ReactApplicationContext) :
     const val NAME = "FieldMachineSecureStore"
     private const val PREFERENCES_NAME = "field_machine_secure_store"
     private const val MAX_VALUE_LENGTH = 20000
-    private val ALLOWED_KEYS = setOf("pairing.staging.v1")
+    private val ALLOWED_KEYS = setOf("pairing.staging.v1", "field-access.staging.v1")
     private const val READ_ERROR_CODE = "E_SECURE_STORE_READ"
     private const val WRITE_ERROR_CODE = "E_SECURE_STORE_WRITE"
     private const val REMOVE_ERROR_CODE = "E_SECURE_STORE_REMOVE"

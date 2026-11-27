@@ -1,8 +1,8 @@
 import { Dimensions, PermissionsAndroid, Platform } from 'react-native';
 import { mediaDevices, type MediaStream } from 'react-native-webrtc';
 
-// Matches the Windows page's 1920 px video cap; the tablet encodes less.
-const MAX_LONG_SIDE = 1920;
+// Smaller than the Windows 1920 px cap: 1920 px stuttered on Android.
+const MAX_LONG_SIDE = 1280;
 const NOTIFICATIONS_API_LEVEL = 33;
 
 const stopStream = (stream: MediaStream) => stream.getTracks().forEach(track => track.stop());

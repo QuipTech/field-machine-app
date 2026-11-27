@@ -1,10 +1,10 @@
 import { create } from 'zustand';
+import createTabletPassword from '../../native/createTabletPassword';
 import tabletAccessStore from '../../native/TabletAccessStore';
 import tabletAccessApi from '../../services/tabletAccessApi';
 import pairingService from '../pairing/pairingService';
 import usePairingStore from '../pairing/usePairingStore';
 import recordSessionDiagnostic from '../connection/sessionDiagnostics';
-import generateTabletPassword from './generateTabletPassword';
 import runTabletAccess, { AccessCancelled, type AccessUpdate } from './runTabletAccess';
 import type { TabletAccessRecord } from './tabletAccessSchema';
 
@@ -40,7 +40,7 @@ const useTabletAccessStore = create<TabletAccessState>((set, get) => {
           store: tabletAccessStore, api: tabletAccessApi,
           readLegacyPairing: pairingService.readLegacyPairing,
           removeLegacyPairing: pairingService.removeLegacyPairing,
-          generatePassword: () => generateTabletPassword(),
+          generatePassword: createTabletPassword,
           wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
           isCancelled,
           onUpdate: update => {

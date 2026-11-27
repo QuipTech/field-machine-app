@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type { z } from 'zod';
 import environment from '../config/environment';
 import {
@@ -56,7 +57,11 @@ const tabletAccessApi = {
   // `deviceToken` upgrades a tablet already paired with a code.
   register: (password: string, deviceToken?: string) =>
     request('POST', '/mc/device/register', deviceToken, registerResponseSchema,
-      { password, platform: 'windows', appVersion: APP_VERSION }),
+      {
+      password,
+      platform: Platform.OS === 'android' ? 'android' : 'windows',
+      appVersion: APP_VERSION,
+    }),
   getRegistration: (tabletToken: string) =>
     request('GET', '/mc/device/registration', tabletToken, registrationSchema),
   changePassword: (tabletToken: string, password: string) =>

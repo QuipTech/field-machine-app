@@ -15,6 +15,7 @@ class RemoteInputService : AccessibilityService() {
 
   internal val gestures = RemoteGestures(this)
   internal val text = RemoteTextInput(this)
+  internal val bubble = RemoteSessionBubble(this)
 
   override fun onServiceConnected() {
     super.onServiceConnected()
@@ -46,6 +47,7 @@ class RemoteInputService : AccessibilityService() {
 
   private fun disconnect() {
     release()
+    bubble.hide()
     if (current === this) current = null
   }
 

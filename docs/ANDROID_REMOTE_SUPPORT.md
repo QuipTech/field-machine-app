@@ -138,3 +138,14 @@ Use the paired staging tablet (Ht-667) and a Portal user with `mc.remote`.
    and the card links back to settings.
 8. Check the session diagnostics (`[machine-session]` in logcat) for
    `remote:*` events. They hold no credentials, URLs, or input contents.
+
+## Minimised app and floating marker (added 2026-11-27)
+
+- React Native pauses JavaScript timers in the background, which stopped the
+  session heartbeat. A headless task now runs while a session is shared.
+- A red "REMOTE" marker floats over every app. Tap it for **Open FIELD
+  Machine** or **End session**; drag it up or down to move it.
+- The marker uses the accessibility service. If the operator has not enabled
+  it, there is no marker; the capture notification remains.
+- Video is limited to 1280 px on the long side and 15 frames per second.
+

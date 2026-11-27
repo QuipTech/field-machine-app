@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.fieldmachine.delivery.DesignDeliveryModule
+import com.fieldmachine.securestore.SecureRandomModule
 import com.fieldmachine.securestore.SecureStoreModule
 import com.fieldmachine.transfer.PortalTransferModule
 
@@ -21,6 +22,7 @@ class FieldMachinePackage : BaseReactPackage() {
   private val moduleClasses =
     mapOf(
       SecureStoreModule.NAME to SecureStoreModule::class.java,
+      SecureRandomModule.NAME to SecureRandomModule::class.java,
       PortalTransferModule.NAME to PortalTransferModule::class.java,
       DesignDeliveryModule.NAME to DesignDeliveryModule::class.java,
     )
@@ -28,6 +30,7 @@ class FieldMachinePackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
     when (name) {
       SecureStoreModule.NAME -> SecureStoreModule(reactContext)
+      SecureRandomModule.NAME -> SecureRandomModule(reactContext)
       PortalTransferModule.NAME -> PortalTransferModule(reactContext)
       DesignDeliveryModule.NAME -> DesignDeliveryModule(reactContext)
       else -> null

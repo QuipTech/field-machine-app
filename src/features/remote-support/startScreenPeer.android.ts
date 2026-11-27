@@ -6,6 +6,7 @@ import {
 } from 'react-native-webrtc';
 import type { RemoteMediaConnection } from '../../services/getRemoteMediaConnection';
 import signalingMessages, { type SignalingCandidate, type SignalingOffer } from './signalingMessages';
+import startScreenVideo from './startScreenVideo.android';
 
 export interface ScreenPeerCallbacks {
   onSignal: (event: string) => void;
@@ -178,7 +179,7 @@ const startScreenPeer = (
     const state = peer.connectionState;
     callbacks.onSignal(`peer_${state}`);
     if (state === 'connected') {
-      if (track) track.enabled = true;
+      if (track) startScreenVideo(peer, track);
       callbacks.onStatus('Sharing screen.');
     } else if (state === 'disconnected') {
       callbacks.onControlMessage('control-release');

@@ -24,19 +24,23 @@ class RemoteSupportPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
     when (name) {
       RemoteDesktopInputModule.NAME -> RemoteDesktopInputModule(reactContext)
+      RemoteSessionModule.NAME -> RemoteSessionModule(reactContext)
       else -> null
     }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider = ReactModuleInfoProvider {
     mapOf(
-      RemoteDesktopInputModule.NAME to ReactModuleInfo(
-        RemoteDesktopInputModule.NAME,
-        RemoteDesktopInputModule::class.java.name,
+      RemoteDesktopInputModule.NAME to RemoteDesktopInputModule::class.java,
+      RemoteSessionModule.NAME to RemoteSessionModule::class.java,
+    ).mapValues { (name, moduleClass) ->
+      ReactModuleInfo(
+        name,
+        moduleClass.name,
         false, // canOverrideExistingModule
         false, // needsEagerInit
         false, // isCxxModule
         false, // isTurboModule
-      ),
-    )
+      )
+    }
   }
 }
