@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import ActionButton from '../components/ActionButton';
+import PrivacyPolicyLink from '../components/PrivacyPolicyLink';
 import styles from '../features/pairing/pairingStyles';
 import HomeDisconnect from '../features/pairing/HomeDisconnect';
 import TabletAccessCard from '../features/tablet-access/TabletAccessCard';
@@ -32,6 +33,7 @@ const SettingsScreen = ({ onOpenDiagnostics }: Props) => {
       <TabletAccessCard />
       <HomeDisconnect />
       <ActionButton title="Diagnostics" onPress={onOpenDiagnostics} />
+      <PrivacyPolicyLink />
     </ScrollView>
   );
 };

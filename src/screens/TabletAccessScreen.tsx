@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { ScrollView, Text } from 'react-native';
+import PrivacyPolicyLink from '../components/PrivacyPolicyLink';
 import styles from '../features/pairing/pairingStyles';
 import usePairingStore from '../features/pairing/usePairingStore';
 import TabletAccessCard from '../features/tablet-access/TabletAccessCard';
@@ -23,6 +24,7 @@ const TabletAccessScreen = () => {
       {pairingStatus === 'loading' && <Text style={styles.text}>Reading secure storage…</Text>}
       {pairingError && <Text accessibilityRole="alert" style={styles.error}>{pairingError}</Text>}
       <TabletAccessCard />
+      <PrivacyPolicyLink />
     </ScrollView>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, ScrollView, Text, View } from 'react-native';
+import PrivacyPolicyLink from '../components/PrivacyPolicyLink';
 import PairingCodeForm from '../features/pairing/PairingCodeForm';
 import usePairingStore from '../features/pairing/usePairingStore';
 import styles from '../features/pairing/pairingStyles';
@@ -95,6 +96,7 @@ const PairingScreen = ({ isSettings = false }: { isSettings?: boolean }) => {
           />
         )}
       </View>
+      <PrivacyPolicyLink />
       <Modal
         visible={isCodeDialogOpen}
         transparent
