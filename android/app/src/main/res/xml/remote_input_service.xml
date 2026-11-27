@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Remote-control accessibility service. It performs gestures and edits the
-  focused field only while an operator-approved Portal support session has
-  control. To edit text it reads the focused field; it never stores or sends
+  focused field only while an active Portal support session has control
+  (approved on the tablet, or started with the tablet password). To edit text it reads the focused field; it never stores or sends
   that text.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"

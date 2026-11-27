@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">FIELD Machine</string>
-    <string name="remote_input_description">Lets Portal support tap, swipe and type on this tablet during a support session where you allow control. To edit text, it reads the selected text field on the tablet only.</string>
+    <string name="remote_input_description">Lets Portal support tap, swipe and type on this tablet during an active support session, including one started with the tablet password, and shows a floating session marker. To edit text, it reads the selected text field on the tablet only.</string>
 </resources>

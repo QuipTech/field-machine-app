@@ -35,9 +35,13 @@ const RemoteControlConsent = ({ error, isSubmitting, onAccept, onDecline }: Prop
           </Text>
           <Text style={styles.heading}>You stay in control</Text>
           <Text style={styles.body}>
-            Control works only in a session where you choose “Allow with control access” and share your screen. You
-            can end the session at any time, withdraw this consent on the Remote Support screen, or turn the service
-            off in Android Accessibility settings.
+            Control works only while a support session is active and you have shared your screen. Support staff who
+            have this tablet’s password can start a session without asking first; other requests need your approval.
+          </Text>
+          <Text style={styles.body}>
+            While a session is active, a floating REMOTE marker is shown over other apps so you can return to FIELD
+            Machine or end the session. You can end the session at any time, withdraw this consent on the Remote
+            Support screen, or turn the service off in Android Accessibility settings.
           </Text>
           <Text style={styles.body}>If you agree, turn on the service in Android settings to finish setup.</Text>
           {error && <Text accessibilityLiveRegion="polite" style={[styles.body, styles.error]}>{error}</Text>}
