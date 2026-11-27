@@ -17,7 +17,7 @@ export interface ScreenPeerCallbacks {
 
 const MAX_QUEUED_ICE = 128;
 const MAX_CONTROL_MESSAGE = 8192;
-const RECONNECT_GRACE_MS = 5000;
+const RECONNECT_GRACE_MS = 30000;
 
 /**
  * Android counterpart of the Windows WebView peer (screenPeerPage.ts and its

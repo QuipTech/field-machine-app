@@ -34,6 +34,9 @@ class RemoteSessionBubble(private val service: AccessibilityService) {
     val actions = LinearLayout(service).apply {
       orientation = LinearLayout.VERTICAL
       visibility = View.GONE
+      // Without a fixed width the buttons shrink to the round marker's width
+      // and the second one is cut off.
+      layoutParams = LinearLayout.LayoutParams(dp(220), LinearLayout.LayoutParams.WRAP_CONTENT)
       addView(button("Open FIELD Machine") { openApp() })
       addView(button("End session") { onEnd() })
     }
@@ -101,6 +104,9 @@ class RemoteSessionBubble(private val service: AccessibilityService) {
   private fun button(label: String, onPress: () -> Unit) = Button(service).apply {
     text = label
     isAllCaps = false
+    layoutParams = LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
+    )
     setOnClickListener { onPress() }
   }
 
